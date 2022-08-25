@@ -1,0 +1,2 @@
+#generate inital rma.mv model
+data2<- escalc(measure = "SMD", m1i = mean_score_sim, m2i = mean_score_control, sd1i = SD_sim, sd2i = SD_control, n1i = participants_sim, n2i = participants_control, data = data)
