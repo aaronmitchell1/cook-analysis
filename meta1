@@ -34,10 +34,10 @@ data2$instruction_ID <- as.factor(data2$instruction_ID)
 data2$trial_duration <- as.factor(data2$trial_duration)
 
 #model for HCP_ID marginal mean
-m4 <- rma.mv(yi = yi, V = vi, method = "REML", mods = ~HCP_ID, random = (~1 | study_ID/effectsize_ID), data = data2)
+m5 <- rma.mv(yi = yi, V = vi, method = "REML", mods = ~HCP_ID, random = (~1 | study_ID/effectsize_ID), data = data2)
 
 #calculate marginal means with emmeans
 #qdrg object
-emm_qdrg1<-qdrg(object = m4, data = data2)
+emm_qdrg1<-qdrg(object = m5, data = data2)
 emmeans(emm_qdrg1, specs = "HCP_ID", df = data2$ddf, weights = "prop")
 #follow same method for sim type etc.
