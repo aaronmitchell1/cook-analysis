@@ -10,6 +10,9 @@ mlm.variance.distribution(m1)
 #make overall orchard plot without mods using orchaRd
 orchard_plot(m1, data = data2, group = "study_ID", xlab = "SMD", transfm = "none")
 
+#prepare data for time lag bias - mean-centre year
+data2$year <- as.vector(scale(data2$year, scale = F))
+
 #model for publication + time lag bias: added column inv to excel with square root of inverse of (sum of n participants/(n participants control*n participants intervention))
 m2<-rma.mv(yi = yi, V = vi, method = "REML", mods = ~year + inv,  random = (~1 | study_ID/effectsize_ID), data = data2)
 
