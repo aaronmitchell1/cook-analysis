@@ -1,10 +1,43 @@
 #add SMDs to data using metafor
 data2<-escalc(measure = "SMD", m1i = mean_score_sim, m2i = mean_score_control, sd1i = SD_sim, sd2i = SD_control, n1i = participants_sim, n2i = participants_control, data = data)
-#generate initial model without mods
+
+#initial model without mods for overall SMD
 m1<-rma.mv(yi = yi, V = vi, method = "REML", random = (~1 | study_ID/effectsize_ID), data = data2)
-#get I^2 using dmetar
+
+#get I^2 for overall model using dmetar
 mlm.variance.distribution(m1)
+
 #make overall orchard plot without mods using orchaRd
 orchard_plot(m1, data = data2, group = "study_ID", xlab = "SMD", transfm = "none")
+
 #model for publication + time lag bias: added column inv to excel with square root of inverse of (sum of n participants/(n participants control*n participants intervention))
 m2<-rma.mv(yi = yi, V = vi, method = "REML", mods = ~year + inv,  random = (~1 | study_ID/effectsize_ID), data = data2)
+
+#model with all mods
+m3<-rma.mv(yi = yi, V = vi, method = "REML", mods = ~year + inv + HCP_ID + sim_type_ID + instruction_ID + trial_duration + MERSQI_score, random = (~1 | study_ID/effectsize_ID), data = data2)
+
+#orchard plots for publication/time lag bias
+#having issues with this - only seems to work if you use an rma model with just 1 mod, otherwise gives data frame error?
+#even then with the mod added it just produces a plot that looks identical to overall one?
+#tried method of putting plot x/plot y to show 2 plots in 1 as here: https://daniel1noble.github.io/orchaRd/#Example_2:_Predation_and_Invertebrate_Community but it doesn't work?
+#method I've used is for a given mod, say inv for publication bias:
+m4<-rma.mv(yi = yi, V = vi, method = "REML", mods = ~inv,  random = (~1 | study_ID/effectsize_ID), data = data2)
+#if you don't use at = NULL here it gives an error but maybe that's causing another problem, then if you add a mod at this stage it also gives an error:
+biasplot_model<-mod_results(m4, at = NULL, data = data2, group = "study_ID")
+orchard_plot(biasplot_model, mod = "inv", data = data2, group = "study_ID", xlab = "SMD", transfm = "none")
+#then if you save those as objects, create another and do orchardplot1/orchardplot2 like in the vignette it gives an error?
+
+#prepare data for marginal means: convert HCP ID, sim_type_ID, instruction_ID and trial_duration to factors using as.factor
+data2$HCP_ID <- as.factor(data2$HCP_ID)
+data2$sim_type_ID <- as.factor(data2$sim_type_ID)
+data2$instruction_ID <- as.factor(data2$instruction_ID)
+data2$trial_duration <- as.factor(data2$trial_duration)
+
+#model for HCP_ID marginal mean
+m4 <- rma.mv(yi = yi, V = vi, method = "REML", mods = ~HCP_ID, random = (~1 | study_ID/effectsize_ID), data = data2)
+
+#calculate marginal means with emmeans
+#qdrg object
+emm_qdrg1<-qdrg(object = m4, data = data2)
+emmeans(emm_qdrg1, specs = "HCP_ID", df = data2$ddf, weights = "prop")
+#follow same method for sim type etc.
