@@ -30,6 +30,10 @@ biasplot_model<-mod_results(m4, at = NULL, data = data2, group = "study_ID")
 orchard_plot(biasplot_model, mod = "inv", data = data2, group = "study_ID", xlab = "SMD", transfm = "none")
 #then if you save those as objects, create another and do orchardplot1/orchardplot2 like in the vignette it gives an error?
 
+#tried caterpillar plot for publication bias with model above
+caterpillars(#mod results object with just inv as mod#, mod = "inv", data = data2, group = "study_ID", xlab = "SMD", transfm = "none")
+#seems to work but then says data only over 53 levels for study_ID, if you look directly at the model it's over 66 levels with no mention of 53 anywhere?
+
 #prepare data for marginal means: convert HCP ID, sim_type_ID, instruction_ID and trial_duration to factors using as.factor
 data2$HCP_ID <- as.factor(data2$HCP_ID)
 data2$sim_type_ID <- as.factor(data2$sim_type_ID)
