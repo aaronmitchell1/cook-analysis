@@ -16,8 +16,15 @@ orchard_plot(m1, data = data2, group = "study_ID", xlab = "SMD", transfm = "none
 #model for publication + time lag bias: added column inv to excel with square root of inverse of (sum of n participants/(n participants control*n participants intervention))
 m2<-rma.mv(yi = yi, V = vi, method = "REML", mods = ~year + inv,  random = (~1 | study_ID/effectsize_ID), data = data2)
 
+#convert relevant mods to factors
+data2$HCP_ID <- as.factor(data2$HCP_ID)
+data2$sim_type_ID <- as.factor(data2$sim_type_ID)
+data2$instruction_ID <- as.factor(data2$instruction_ID)
+data2$trial_duration <- as.factor(data2$trial_duration)
+data2$outcome_ID <-as.factor(data2$outcome_ID)
+
 #model with all mods
-m3<-rma.mv(yi = yi, V = vi, method = "REML", mods = ~year + inv + HCP_ID + sim_type_ID + instruction_ID + trial_duration + MERSQI_score, random = (~1 | study_ID/effectsize_ID), data = data2)
+m3<-rma.mv(yi = yi, V = vi, method = "REML", mods = ~year + inv + HCP_ID + sim_type_ID + instruction_ID + trial_duration + MERSQI_score + outcome_ID, random = (~1 | study_ID/effectsize_ID), data = data2)
 
 #orchard plots for publication/time lag bias
 #having issues with this - only seems to work if you use an rma model with just 1 mod, otherwise gives data frame error?
@@ -34,11 +41,11 @@ orchard_plot(biasplot_model, mod = "inv", data = data2, group = "study_ID", xlab
 caterpillars(#mod results object with just inv as mod#, mod = "inv", data = data2, group = "study_ID", xlab = "SMD", transfm = "none")
 #seems to work but then says data only over 53 levels for study_ID, if you look directly at the model it's over 66 levels with no mention of 53 anywhere?
 
-#prepare data for marginal means: convert HCP ID, sim_type_ID, instruction_ID and trial_duration to factors using as.factor
+#convert moderator variables to factors for marginal means
 data2$HCP_ID <- as.factor(data2$HCP_ID)
 data2$sim_type_ID <- as.factor(data2$sim_type_ID)
 data2$instruction_ID <- as.factor(data2$instruction_ID)
-data2$trial_duration <- as.factor(data2$trial_duration)
+data2$trial_duration <- as.factor(data2$trial_duration) #etc.
 
 #model for HCP_ID marginal mean
 m5 <- rma.mv(yi = yi, V = vi, method = "REML", mods = ~HCP_ID, random = (~1 | study_ID/effectsize_ID), data = data2)
