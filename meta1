@@ -55,3 +55,7 @@ m5 <- rma.mv(yi = yi, V = vi, method = "REML", mods = ~HCP_ID, random = (~1 | st
 emm_qdrg1<-qdrg(object = m5, data = data2)
 emmeans(emm_qdrg1, specs = "HCP_ID", df = data2$ddf, weights = "prop")
 #follow same method for sim type etc.
+
+#can also use emmprep with development version of metafor
+emm_1<-emmprep(m5)
+
