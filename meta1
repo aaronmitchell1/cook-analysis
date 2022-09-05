@@ -59,3 +59,7 @@ emmeans(emm_qdrg1, specs = "HCP_ID", df = data2$ddf, weights = "prop")
 #can also use emmprep with development version of metafor
 emm_1<-emmprep(m5)
 
+#calculate heterogeneity using subset
+HCP1_model <- rma.mv(yi = yi, V = vi, method = "REML", random = (~1 | study_ID/effectsize_ID), data = data2, subset = data2$HCP_ID=="1")
+#use dmetar to calculate I^2
+mlm.variance.distribution(HCP1_model)
