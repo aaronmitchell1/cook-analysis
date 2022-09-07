@@ -22,6 +22,7 @@ data2$sim_type_ID <- as.factor(data2$sim_type_ID)
 data2$instruction_ID <- as.factor(data2$instruction_ID)
 data2$trial_duration <- as.factor(data2$trial_duration)
 data2$outcome_ID <-as.factor(data2$outcome_ID)
+data2$speciality <- as.factor(data2$speciality)
 
 #model with all mods
 m3<-rma.mv(yi = yi, V = vi, method = "REML", mods = ~year + inv + HCP_ID + sim_type_ID + instruction_ID + trial_duration + MERSQI_score + outcome_ID, random = (~1 | study_ID/effectsize_ID), data = data2)
