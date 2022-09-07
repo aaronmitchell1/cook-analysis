@@ -7,7 +7,7 @@ data2$year <- as.vector(scale(data2$year, scale = F))
 #initial model without mods for overall SMD
 m1<-rma.mv(yi = yi, V = vi, method = "REML", random = (~1 | study_ID/effectsize_ID), data = data2)
 
-#get I^2 for overall model using dmetar
+#get I^2 for overall model between and within studies using dmetar
 mlm.variance.distribution(m1)
 
 #make overall orchard plot without mods using orchaRd
@@ -42,25 +42,10 @@ orchard_plot(biasplot_model, mod = "inv", data = data2, group = "study_ID", xlab
 caterpillars(#mod results object with just inv as mod#, mod = "inv", data = data2, group = "study_ID", xlab = "SMD", transfm = "none")
 #seems to work but then says data only over 53 levels for study_ID, if you look directly at the model it's over 66 levels with no mention of 53 anywhere?
 
-#convert moderator variables to factors for marginal means
-data2$HCP_ID <- as.factor(data2$HCP_ID)
-data2$sim_type_ID <- as.factor(data2$sim_type_ID)
-data2$instruction_ID <- as.factor(data2$instruction_ID)
-data2$trial_duration <- as.factor(data2$trial_duration) #etc.
-
 #model for HCP_ID marginal mean
 m5 <- rma.mv(yi = yi, V = vi, method = "REML", mods = ~HCP_ID, random = (~1 | study_ID/effectsize_ID), data = data2)
 
-#calculate marginal means with emmeans
-#qdrg object
-emm_qdrg1<-qdrg(object = m5, data = data2)
-emmeans(emm_qdrg1, specs = "HCP_ID", df = data2$ddf, weights = "prop")
-#follow same method for sim type etc.
-
-#can also use emmprep with development version of metafor
+#calculate marginal means with emmeans using development version of metafor
 emm_1<-emmprep(m5)
-
-#calculate heterogeneity using subset
-HCP1_model <- rma.mv(yi = yi, V = vi, method = "REML", random = (~1 | study_ID/effectsize_ID), data = data2, subset = data2$HCP_ID=="1")
-#use dmetar to calculate I^2
-mlm.variance.distribution(HCP1_model)
+emmeans(emm_1, specs = "HCP_ID", df = data2$ddf, weights = "prop")
+#follow same method for sim type etc., then pairwise comparisons to generate p-values
