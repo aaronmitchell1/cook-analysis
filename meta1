@@ -25,7 +25,7 @@ data2$outcome_ID <-as.factor(data2$outcome_ID)
 data2$speciality <- as.factor(data2$speciality)
 
 #model with all mods
-m3<-rma.mv(yi = yi, V = vi, method = "REML", mods = ~year + inv + HCP_ID + sim_type_ID + instruction_ID + trial_duration + MERSQI_score + outcome_ID, random = (~1 | study_ID/effectsize_ID), data = data2)
+m3<-rma.mv(yi = yi, V = vi, method = "REML", mods = ~year + inv + HCP_ID + sim_type_ID + instruction_ID + trial_duration + MERSQI_score + outcome_ID + speciality, random = (~1 | study_ID/effectsize_ID), data = data2)
 
 #orchard plots for publication/time lag bias
 #having issues with this - only seems to work if you use an rma model with just 1 mod, otherwise gives data frame error?
